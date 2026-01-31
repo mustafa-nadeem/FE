@@ -9,6 +9,300 @@
   --horizontal-margin: clamp(2rem, 4vw, 4rem);
 }
 
+/* ——— App layout ——— */
+.app {
+  width: 100%;
+}
+
+/* ——— Shared section styles (black background sections) ——— */
+.section {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem var(--horizontal-margin);
+  box-sizing: border-box;
+}
+
+.section--black {
+  background-color: #000;
+  color: #fff;
+}
+
+.section-inner {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.section-title {
+  font-family: 'EmilioTest', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 300;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin: 0 0 1.5rem;
+}
+
+.section-placeholder {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+}
+
+/* ——— Countdown section ——— */
+.section--countdown {
+  min-height: auto;
+  padding: 3rem var(--horizontal-margin) 1.5rem var(--horizontal-margin);
+}
+
+.section--countdown + .section {
+  min-height: 100vh;
+  padding-top: 1rem;
+}
+
+.section--countdown + .venue-section {
+  margin-top: 0;
+}
+
+.countdown {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: clamp(1rem, 2.9vw, 2.44rem);
+}
+
+.countdown-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0.7;
+  transition: transform 700ms ease, opacity 700ms ease;
+  min-width: 4.5rem;
+}
+
+/* Offset positions before animation */
+.countdown-unit--days {
+  transform: translate3d(-48px, 0px, 0);
+}
+
+.countdown-unit--hours {
+  transform: translate3d(-18px, 18px, 0);
+}
+
+.countdown-unit--minutes {
+  transform: translate3d(18px, -12px, 0);
+}
+
+.countdown-unit--seconds {
+  transform: translate3d(48px, 12px, 0);
+}
+
+/* Active state — units resolve into alignment */
+.section--countdown.is-active .countdown-unit {
+  transform: translate3d(0, 0, 0);
+  opacity: 1;
+}
+
+.countdown-number {
+  font-family: 'EmilioTest', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: clamp(3rem, 10vw, 7rem);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  display: inline-block;
+  min-width: 2.1em;
+  text-align: center;
+}
+
+.countdown-label {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: clamp(0.75rem, 1.5vw, 1rem);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .countdown-unit {
+    transform: none !important;
+    opacity: 1 !important;
+    transition: none !important;
+  }
+}
+
+/* ——— Venue section ——— */
+.venue-section {
+  background-color: #000;
+  color: #fff;
+  min-height: 250vh;
+  position: relative;
+}
+
+.venue-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem var(--horizontal-margin);
+  overflow: hidden;
+}
+
+.venue-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  max-width: 1400px;
+  width: 100%;
+  align-items: center;
+}
+
+.venue-images {
+  position: relative;
+  height: 100%;
+  min-height: 500px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.venue-image {
+  position: absolute;
+  left: 50%;
+  margin-left: -160px;
+  width: 320px;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  object-fit: cover;
+  will-change: transform, opacity;
+  transform-origin: center bottom;
+}
+
+.venue-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.venue-paragraph {
+  margin: 0;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: -0.01em;
+}
+
+.venue-text-fill {
+  background: linear-gradient(
+    to right,
+    #fff 0%,
+    #fff var(--fill-progress, 0%),
+    rgba(255, 255, 255, 0.25) var(--fill-progress, 0%),
+    rgba(255, 255, 255, 0.25) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  transition: none;
+}
+
+@media (max-width: 1024px) {
+  .venue-sticky {
+    padding: 2rem;
+  }
+
+  .venue-container {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .venue-images {
+    order: 2;
+    min-height: 400px;
+  }
+
+  .venue-image {
+    width: 260px;
+    margin-left: -130px;
+  }
+
+  .venue-text {
+    order: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --horizontal-margin: 1.5rem;
+  }
+
+  .section {
+    min-height: 100vh;
+  }
+
+  .section--countdown {
+    padding-top: 2.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .section--countdown + .section {
+    padding-top: 1.5rem;
+  }
+
+  .countdown {
+    gap: clamp(0.75rem, 2vw, 1.25rem);
+  }
+
+  .countdown-unit--days {
+    transform: translate3d(-24px, 0px, 0);
+  }
+
+  .countdown-unit--hours {
+    transform: translate3d(-12px, 12px, 0);
+  }
+
+  .countdown-unit--minutes {
+    transform: translate3d(12px, -8px, 0);
+  }
+
+  .countdown-unit--seconds {
+    transform: translate3d(24px, 8px, 0);
+  }
+
+  .venue-section {
+    min-height: 200vh;
+  }
+
+  .venue-sticky {
+    padding: 1.5rem;
+  }
+
+  .venue-paragraph {
+    font-size: 1.125rem;
+  }
+
+  .venue-images {
+    min-height: 350px;
+  }
+
+  .venue-image {
+    width: 200px;
+    margin-left: -100px;
+  }
+}
+
+/* ——— Hero ——— */
 .hero-section {
   position: relative;
   width: 100%;
@@ -494,6 +788,39 @@
 }
 
 @media (max-width: 768px) {
+  .section {
+    padding: 3rem 1.5rem;
+    min-height: 80vh;
+  }
+
+  .section--countdown {
+    padding: 2.5rem 1.5rem 1.5rem 1.5rem;
+  }
+
+  .section--countdown + .section {
+    padding-top: 1.5rem;
+  }
+
+  .countdown {
+    gap: clamp(0.75rem, 2vw, 1.25rem);
+  }
+
+  .countdown-unit--days {
+    transform: translate3d(-24px, 0px, 0);
+  }
+
+  .countdown-unit--hours {
+    transform: translate3d(-12px, 12px, 0);
+  }
+
+  .countdown-unit--minutes {
+    transform: translate3d(12px, -8px, 0);
+  }
+
+  .countdown-unit--seconds {
+    transform: translate3d(24px, 8px, 0);
+  }
+
   .hero-content {
     padding: 1rem;
   }
