@@ -41,6 +41,9 @@ function App() {
         <source src="/148593-794221531.mp4" type="video/mp4" />
       </video>
 
+      {/* 30% black overlay below gradient */}
+      <div className="black-overlay-30"></div>
+
       {/* Logo - positioned to the left of navbar */}
       <div
         className={`navbar-logo-container ${animationPhase === "content-in" ? "animate-in" : ""}`}
