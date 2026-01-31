@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./App.css";
 import familyEventsLogo from "./sponsors-logo/family-events.png";
 import readFoundationLogo from "./sponsors-logo/read-foundation.png";
@@ -7,6 +7,36 @@ import charityDinnerLogo2 from "./Charitry-Dinner-logo2.svg";
 
 function App() {
   const [animationPhase, setAnimationPhase] = useState("initial"); // initial, heading-in, bg-fade, heading-shrink, content-in
+
+  // ——— Countdown state ———
+  const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [countdownActive, setCountdownActive] = useState(false);
+  const countdownRef = useRef(null);
+
+  const [venueProgress, setVenueProgress] = useState(0);
+  const venueRef = useRef(null);
+  const heroRef = useRef(null);
+  const [logoVisible, setLogoVisible] = useState(true);
+  const [scrollUnlocked, setScrollUnlocked] = useState(false);
+
+  // ——— Scroll lock during hero animation ———
+  useEffect(() => {
+    if (!scrollUnlocked) {
+      // Lock scroll
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      // Unlock scroll when animation completes
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    };
+  }, [scrollUnlocked]);
 
   useEffect(() => {
     // Phase 1: Start heading animation immediately while black background is visible
@@ -29,10 +59,117 @@ function App() {
     setTimeout(() => {
       setAnimationPhase("content-in");
     }, 5000);
+
+    // Phase 5: Unlock scroll after navbar and content animations complete
+    // Navbar animation: 0.6s delay + 0.8s duration = 1.4s after content-in
+    setTimeout(() => {
+      setScrollUnlocked(true);
+    }, 6400); // 5000ms (content-in) + 600ms (delay) + 800ms (duration)
   }, []);
 
+  // ——— Countdown timer effect ———
+  useEffect(() => {
+    const targetDate = new Date(2026, 2, 1, 14, 0, 0); // March 1, 2026 at 2:00 PM
+
+    const calculateTimeLeft = () => {
+      const now = new Date();
+      const diff = Math.max(0, targetDate - now);
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      return { days, hours, minutes, seconds };
+    };
+
+    setCountdown(calculateTimeLeft());
+
+    const interval = setInterval(() => {
+      const timeLeft = calculateTimeLeft();
+      setCountdown(timeLeft);
+
+      // Stop interval if countdown reached zero
+      if (timeLeft.days === 0 && timeLeft.hours === 0 && timeLeft.minutes === 0 && timeLeft.seconds === 0) {
+        clearInterval(interval);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // ——— IntersectionObserver for countdown scroll animation ———
+  useEffect(() => {
+    const section = countdownRef.current;
+    if (!section) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setCountdownActive(entry.isIntersecting);
+      },
+      { threshold: 0.3 }
+    );
+
+    observer.observe(section);
+
+    return () => observer.disconnect();
+  }, []);
+
+  // ——— Scroll-based venue animation ———
+  useEffect(() => {
+    const handleScroll = () => {
+      const section = venueRef.current;
+      if (!section) return;
+
+      const rect = section.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      const sectionHeight = rect.height;
+
+      const startTrigger = windowHeight * 0.8;
+      const scrolledIntoSection = startTrigger - rect.top;
+      const totalScrollDistance = sectionHeight + startTrigger - windowHeight * 0.2;
+
+      let progress = scrolledIntoSection / totalScrollDistance;
+      progress = Math.max(0, Math.min(1, progress));
+
+      setVenueProgress(progress);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // ——— Scroll detection for logo visibility ———
+  useEffect(() => {
+    const handleScroll = () => {
+      const heroSection = heroRef.current;
+      if (!heroSection) return;
+
+      const rect = heroSection.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      
+      // Hide logo when hero section is completely scrolled past
+      if (rect.bottom < windowHeight * 0.5) {
+        setLogoVisible(false);
+      } else {
+        setLogoVisible(true);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Helper to pad numbers
+  const pad = (num) => String(num).padStart(2, "0");
+
   return (
-    <div className="hero-section">
+    <main className="app">
+      <div className="hero-section" ref={heroRef}>
       <div
         className={`black-overlay ${animationPhase === "bg-fade" || animationPhase === "content-in" ? "fade-out" : ""}`}
       ></div>
@@ -46,7 +183,7 @@ function App() {
 
       {/* Logo - positioned to the left of navbar */}
       <div
-        className={`navbar-logo-container ${animationPhase === "content-in" ? "animate-in" : ""}`}
+        className={`navbar-logo-container ${animationPhase === "content-in" ? "animate-in" : ""} ${!logoVisible ? "fade-out" : ""}`}
       >
         <img
           src={charityDinnerLogo2}
@@ -168,7 +305,139 @@ function App() {
           />
         </div>
       </div>
-    </div>
+      </div>
+
+      {/* ——— Countdown ——— */}
+      <section
+        className={`section section--black section--countdown ${countdownActive ? "is-active" : ""}`}
+        id="countdown"
+        ref={countdownRef}
+      >
+        <div className="section-inner">
+          <div
+            className="countdown"
+            aria-label={`Countdown: ${countdown.days} days, ${countdown.hours} hours, ${countdown.minutes} minutes, ${countdown.seconds} seconds`}
+          >
+            <div className="countdown-unit countdown-unit--days">
+              <span className="countdown-number">{pad(countdown.days)}</span>
+              <span className="countdown-label">Days</span>
+            </div>
+            <div className="countdown-unit countdown-unit--hours">
+              <span className="countdown-number">{pad(countdown.hours)}</span>
+              <span className="countdown-label">Hours</span>
+            </div>
+            <div className="countdown-unit countdown-unit--minutes">
+              <span className="countdown-number">{pad(countdown.minutes)}</span>
+              <span className="countdown-label">Minutes</span>
+            </div>
+            <div className="countdown-unit countdown-unit--seconds">
+              <span className="countdown-number">{pad(countdown.seconds)}</span>
+              <span className="countdown-label">Seconds</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ——— Venue ——— */}
+      <section className="venue-section" id="venue" ref={venueRef}>
+        <div className="venue-sticky">
+          <div className="venue-container">
+            <div className="venue-images">
+              <img
+                src="/royalnawaab/food1.jpg"
+                alt="Royal Nawaab cuisine"
+                className="venue-image"
+                style={{
+                  transform: `translateY(${Math.max(-120, 400 - venueProgress * 1300)}px) scale(${Math.min(1, 0.4 + venueProgress * 1.5)})`,
+                  opacity: Math.min(1, venueProgress * 4),
+                  zIndex: 3
+                }}
+              />
+              <img
+                src="/royalnawaab/food2.jpg"
+                alt="Royal Nawaab dishes"
+                className="venue-image"
+                style={{
+                  transform: `translateY(${Math.max(30, 500 - Math.max(0, venueProgress - 0.2) * 1300)}px) scale(${Math.min(1, 0.4 + Math.max(0, venueProgress - 0.2) * 1.5)})`,
+                  opacity: Math.min(1, Math.max(0, (venueProgress - 0.15) * 4)),
+                  zIndex: 2
+                }}
+              />
+              <img
+                src="/royalnawaab/inside.jpg"
+                alt="Royal Nawaab interior"
+                className="venue-image"
+                style={{
+                  transform: `translateY(${Math.max(180, 600 - Math.max(0, venueProgress - 0.4) * 1300)}px) scale(${Math.min(1, 0.4 + Math.max(0, venueProgress - 0.4) * 1.5)})`,
+                  opacity: Math.min(1, Math.max(0, (venueProgress - 0.35) * 4)),
+                  zIndex: 1
+                }}
+              />
+            </div>
+            <div className="venue-text">
+              <p className="venue-paragraph">
+                <span className="venue-text-fill" style={{ "--fill-progress": `${Math.min(100, venueProgress * 200)}%` }}>
+                  Enjoy a memorable Iftar experience catered by Royal Nawaab, featuring a carefully curated three-course buffet with authentic flavors and premium ingredients.
+                </span>
+              </p>
+              <p className="venue-paragraph">
+                <span className="venue-text-fill" style={{ "--fill-progress": `${Math.min(100, Math.max(0, (venueProgress - 0.5) * 200))}%` }}>
+                  From classic starters to satisfying mains and sweet desserts, this elegant spread is perfect for sharing and celebrating together.
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ——— Topic ——— */}
+      <section className="section section--black topic-section" id="topic">
+        <div className="topic-container">
+          <div className="topic-content">
+            <h2 className="topic-heading">Finding Forgiveness</h2>
+            <p className="topic-subheading">In the Month of Ramadan</p>
+            <p className="topic-description">
+              Forgiveness is more than a concept—it's woven throughout our entire experience during this blessed month. Join us for an evening of reflection, understanding, and spiritual growth that will transform your perspective.
+            </p>
+            <ul className="topic-features">
+              <li className="topic-feature">
+                <span className="topic-feature-icon">~</span>
+                <span>Discover the profound meaning of forgiveness in Islamic tradition and its transformative power.</span>
+              </li>
+              <li className="topic-feature">
+                <span className="topic-feature-icon">=</span>
+                <span>Gain insights from spiritual teachings that guide us toward inner peace and reconciliation.</span>
+              </li>
+              <li className="topic-feature">
+                <span className="topic-feature-icon">✓</span>
+                <span>Learn practical ways to seek forgiveness and extend it to others in your daily life.</span>
+              </li>
+            </ul>
+          </div>
+          <div className="topic-image">
+            <div className="topic-image-placeholder">
+              <span>Image Placeholder</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ——— Speakers ——— */}
+      <section className="section section--black" id="speakers">
+        <div className="section-inner">
+          <h2 className="section-title">Speakers</h2>
+          <p className="section-placeholder">Speakers content coming soon.</p>
+        </div>
+      </section>
+
+      {/* ——— FAQ ——— */}
+      <section className="section section--black" id="faq">
+        <div className="section-inner">
+          <h2 className="section-title">Frequently Asked Questions</h2>
+          <p className="section-placeholder">FAQ content coming soon.</p>
+        </div>
+      </section>
+    </main>
   );
 }
 
