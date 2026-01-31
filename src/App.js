@@ -5,6 +5,9 @@ import readFoundationLogo from './sponsors-logo/read-foundation.png';
 import impactEventsLogo from './sponsors-logo/impact-events.png';
 import maskGroupImage from './Mask group123.png';
 
+const VENUE_IMAGE_GAP = 28;
+const VENUE_IMAGE_HEIGHT = 336;
+
 function App() {
   const [animationPhase, setAnimationPhase] = useState('initial'); // initial, heading-in, video-reveal, content-in
 
@@ -85,12 +88,13 @@ function App() {
       const windowHeight = window.innerHeight;
       const sectionHeight = rect.height;
 
-      const startTrigger = windowHeight * 0.8;
-      const scrolledIntoSection = startTrigger - rect.top;
-      const totalScrollDistance = sectionHeight + startTrigger - windowHeight * 0.2;
+      const entryThreshold = windowHeight * 0.35;
+      const scrollRangeToComplete = 0.75 * (entryThreshold + sectionHeight);
+      const rawProgress = rect.top > entryThreshold
+        ? 0
+        : Math.max(0, Math.min(1, (entryThreshold - rect.top) / scrollRangeToComplete));
 
-      let progress = scrolledIntoSection / totalScrollDistance;
-      progress = Math.max(0, Math.min(1, progress));
+      const progress = rawProgress < 0.05 ? 0 : (rawProgress - 0.05) / 0.95;
 
       setVenueProgress(progress);
     };
@@ -101,8 +105,17 @@ function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Helper to pad numbers
   const pad = (num) => String(num).padStart(2, '0');
+
+  const venueImageStep = VENUE_IMAGE_HEIGHT + VENUE_IMAGE_GAP;
+
+  const venueStackY = venueProgress === 0
+    ? 320
+    : venueProgress < 0.347
+      ? 320 * (1 - venueProgress / 0.347)
+      : venueProgress < 0.695
+        ? 0 - ((venueProgress - 0.347) / 0.348) * 500
+        : -500 - ((venueProgress - 0.695) / 0.305) * (2 * venueImageStep - 500);
 
   return (
     <main className="app">
@@ -198,8 +211,14 @@ function App() {
                 alt="Royal Nawaab cuisine"
                 className="venue-image"
                 style={{
-                  transform: `translateY(${Math.max(-120, 400 - venueProgress * 1300)}px) scale(${Math.min(1, 0.4 + venueProgress * 1.5)})`,
-                  opacity: Math.min(1, venueProgress * 4),
+                  transform: `translateY(${venueStackY}px) scale(${
+                    venueProgress === 0
+                      ? 0.5915
+                      : venueProgress < 0.347
+                        ? 0.5915 + (venueProgress / 0.347) * 0.4085
+                        : 1
+                  })`,
+                  opacity: 1,
                   zIndex: 3
                 }}
               />
@@ -208,8 +227,16 @@ function App() {
                 alt="Royal Nawaab dishes"
                 className="venue-image"
                 style={{
-                  transform: `translateY(${Math.max(30, 500 - Math.max(0, venueProgress - 0.2) * 1300)}px) scale(${Math.min(1, 0.4 + Math.max(0, venueProgress - 0.2) * 1.5)})`,
-                  opacity: Math.min(1, Math.max(0, (venueProgress - 0.15) * 4)),
+                  transform: `translateY(${venueStackY + venueImageStep}px) scale(${
+                    venueProgress < 0.1
+                      ? 0.845
+                      : venueProgress < 0.347
+                        ? 0.845
+                        : venueProgress < 0.695
+                          ? 0.845 + ((venueProgress - 0.347) / 0.348) * 0.155
+                          : 1
+                  })`,
+                  opacity: venueProgress < 0.1 ? 0 : 1,
                   zIndex: 2
                 }}
               />
@@ -218,21 +245,32 @@ function App() {
                 alt="Royal Nawaab interior"
                 className="venue-image"
                 style={{
-                  transform: `translateY(${Math.max(180, 600 - Math.max(0, venueProgress - 0.4) * 1300)}px) scale(${Math.min(1, 0.4 + Math.max(0, venueProgress - 0.4) * 1.5)})`,
-                  opacity: Math.min(1, Math.max(0, (venueProgress - 0.35) * 4)),
+                  transform: `translateY(${venueStackY + 2 * venueImageStep}px) scale(${
+                    venueProgress < 0.45
+                      ? 0.845
+                      : venueProgress < 0.695
+                        ? 0.845
+                        : 0.845 + ((venueProgress - 0.695) / 0.305) * 0.155
+                  })`,
+                  opacity: venueProgress < 0.45 ? 0 : 1,
                   zIndex: 1
                 }}
               />
             </div>
             <div className="venue-text">
               <p className="venue-paragraph">
-                <span className="venue-text-fill" style={{ '--fill-progress': `${Math.min(100, venueProgress * 200)}%` }}>
+                <span className="venue-text-fill" style={{ '--fill-progress': `${venueProgress <= 0 ? 0 : Math.min(100, (venueProgress / 0.347) * 100)}%` }}>
                   Enjoy a memorable Iftar experience catered by Royal Nawaab, featuring a carefully curated three-course buffet with authentic flavors and premium ingredients.
                 </span>
               </p>
               <p className="venue-paragraph">
-                <span className="venue-text-fill" style={{ '--fill-progress': `${Math.min(100, Math.max(0, (venueProgress - 0.5) * 200))}%` }}>
+                <span className="venue-text-fill" style={{ '--fill-progress': `${venueProgress < 0.347 ? 0 : Math.min(100, ((venueProgress - 0.347) / 0.348) * 100)}%` }}>
                   From classic starters to satisfying mains and sweet desserts, this elegant spread is perfect for sharing and celebrating together.
+                </span>
+              </p>
+              <p className="venue-paragraph">
+                <span className="venue-text-fill" style={{ '--fill-progress': `${venueProgress < 0.695 ? 0 : Math.min(100, ((venueProgress - 0.695) / 0.305) * 100)}%` }}>
+                  Royal Nawaab Prevail
                 </span>
               </p>
             </div>
