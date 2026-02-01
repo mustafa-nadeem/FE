@@ -8,6 +8,7 @@ import charityDinnerLogo2 from "./Charitry-Dinner-logo2.svg";
 
 const VENUE_IMAGE_GAP = 28;
 const VENUE_IMAGE_HEIGHT = 336;
+const VENUE_FINAL_LIFT = 150;
 
 function App() {
   const [animationPhase, setAnimationPhase] = useState("initial"); // initial, heading-in, bg-fade, heading-shrink, content-in
@@ -131,7 +132,7 @@ function App() {
       const sectionHeight = rect.height;
 
       const entryThreshold = windowHeight * 0.35;
-      const scrollRangeToComplete = 0.75 * (entryThreshold + sectionHeight);
+      const scrollRangeToComplete = 0.6 * (entryThreshold + sectionHeight);
       const rawProgress = rect.top > entryThreshold
         ? 0
         : Math.max(0, Math.min(1, (entryThreshold - rect.top) / scrollRangeToComplete));
@@ -181,7 +182,7 @@ function App() {
       ? 320 * (1 - venueProgress / 0.347)
       : venueProgress < 0.695
         ? 0 - ((venueProgress - 0.347) / 0.348) * 500
-        : -500 - ((venueProgress - 0.695) / 0.305) * (2 * venueImageStep - 500);
+        : -500 - ((venueProgress - 0.695) / 0.305) * (2 * venueImageStep - 500 + VENUE_FINAL_LIFT);
 
   return (
     <main className="app">
@@ -376,8 +377,8 @@ function App() {
                     venueProgress === 0
                       ? 0.5915
                       : venueProgress < 0.347
-                        ? 0.5915 + (venueProgress / 0.347) * 0.4085
-                        : 1
+                        ? 0.5915 + (venueProgress / 0.347) * 0.5335
+                        : 1.125
                   })`,
                   opacity: 1,
                   zIndex: 3
@@ -394,8 +395,8 @@ function App() {
                       : venueProgress < 0.347
                         ? 0.845
                         : venueProgress < 0.695
-                          ? 0.845 + ((venueProgress - 0.347) / 0.348) * 0.155
-                          : 1
+                          ? 0.845 + ((venueProgress - 0.347) / 0.348) * 0.28
+                          : 1.125
                   })`,
                   opacity: venueProgress < 0.1 ? 0 : 1,
                   zIndex: 2
@@ -411,7 +412,7 @@ function App() {
                       ? 0.845
                       : venueProgress < 0.695
                         ? 0.845
-                        : 0.845 + ((venueProgress - 0.695) / 0.305) * 0.155
+                        : 0.845 + ((venueProgress - 0.695) / 0.305) * 0.28
                   })`,
                   opacity: venueProgress < 0.45 ? 0 : 1,
                   zIndex: 1

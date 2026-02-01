@@ -180,7 +180,7 @@
   left: 50%;
   margin-left: -160px;
   width: 320px;
-  height: auto;
+  aspect-ratio: 4/3;
   border-radius: 12px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
   object-fit: cover;
@@ -1227,7 +1227,7 @@
   left: 50%;
   margin-left: -160px;
   width: 320px;
-  height: auto;
+  aspect-ratio: 4/3;
   border-radius: 12px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
   object-fit: cover;
