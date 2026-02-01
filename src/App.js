@@ -5,6 +5,9 @@ import readFoundationLogo from "./sponsors-logo/read-foundation.png";
 import impactEventsLogo from "./sponsors-logo/impact-events.png";
 import maskGroupImage from "./Mask group123.png";
 import charityDinnerLogo2 from "./Charitry-Dinner-logo2.svg";
+import asimKhanImage from "./speakers/Asim Khan 1.jpg";
+import shaqurRehmanImage from "./speakers/Shaqur Rehman 2 (1).png";
+import umerSulemanImage from "./speakers/Umer Suleman 1 (1).jpeg";
 
 const VENUE_IMAGE_GAP = 28;
 const VENUE_IMAGE_HEIGHT = 336;
@@ -22,6 +25,23 @@ function App() {
   const heroRef = useRef(null);
   const [logoVisible, setLogoVisible] = useState(true);
   const [scrollUnlocked, setScrollUnlocked] = useState(false);
+  const [topicActive, setTopicActive] = useState(false);
+  const topicRef = useRef(null);
+  const [openFaqIndex, setOpenFaqIndex] = useState(null);
+
+  // ——— Always start from top on page load ———
+  useEffect(() => {
+    // Prevent browser from restoring scroll position
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+    
+    // Scroll to top on page load
+    window.scrollTo(0, 0);
+    
+    // Also scroll to top when component mounts
+    window.scrollTo(0, 0);
+  }, []);
 
   // ——— Scroll lock during hero animation ———
   useEffect(() => {
@@ -113,6 +133,23 @@ function App() {
         setCountdownActive(entry.isIntersecting);
       },
       { threshold: 0.3 }
+    );
+
+    observer.observe(section);
+
+    return () => observer.disconnect();
+  }, []);
+
+  // ——— IntersectionObserver for topic scroll animation ———
+  useEffect(() => {
+    const section = topicRef.current;
+    if (!section) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setTopicActive(entry.isIntersecting);
+      },
+      { threshold: 0.2 }
     );
 
     observer.observe(section);
@@ -440,50 +477,153 @@ function App() {
       </section>
 
       {/* ——— Topic ——— */}
-      <section className="section section--black topic-section" id="topic">
+      <section className={`section section--black topic-section ${topicActive ? "is-active" : ""}`} id="topic" ref={topicRef}>
         <div className="topic-container">
           <div className="topic-content">
-            <h2 className="topic-heading">Finding Forgiveness</h2>
-            <p className="topic-subheading">In the Month of Ramadan</p>
+            <h2 className="topic-heading">In the Blessed Month of Ramadan,</h2>
+            <p className="topic-subheading">How Can We Attain Allah's Mercy and Have Our Sins Completely Forgiven?</p>
             <p className="topic-description">
-              Forgiveness is more than a concept—it's woven throughout our entire experience during this blessed month. Join us for an evening of reflection, understanding, and spiritual growth that will transform your perspective.
+              How can we secure the immense reward of Laylatul Qadr? How do we become among those whom Allah loves?
             </p>
             <ul className="topic-features">
               <li className="topic-feature">
-                <span className="topic-feature-icon">~</span>
-                <span>Discover the profound meaning of forgiveness in Islamic tradition and its transformative power.</span>
+                <span className="topic-feature-icon">🕌</span>
+                <span>Learn the profound teachings of forgiveness in Islamic tradition and their transformative power in our lives.</span>
               </li>
               <li className="topic-feature">
-                <span className="topic-feature-icon">=</span>
-                <span>Gain insights from spiritual teachings that guide us toward inner peace and reconciliation.</span>
+                <span className="topic-feature-icon">✨</span>
+                <span>Learn how to secure the immense reward of Laylatul Qadr and become among those whom Allah loves.</span>
               </li>
               <li className="topic-feature">
-                <span className="topic-feature-icon">✓</span>
-                <span>Learn practical ways to seek forgiveness and extend it to others in your daily life.</span>
+                <span className="topic-feature-icon">🌙</span>
+                <span>Reflect deeply on your actions, seek sincere repentance, and understand the path to spiritual purification.</span>
+              </li>
+              <li className="topic-feature">
+                <span className="topic-feature-icon">🤲</span>
+                <span>Be Forgiven through Allah's infinite mercy and grace, and experience the peace that comes with true forgiveness.</span>
               </li>
             </ul>
-          </div>
-          <div className="topic-image">
-            <div className="topic-image-placeholder">
-              <span>Image Placeholder</span>
-            </div>
           </div>
         </div>
       </section>
 
       {/* ——— Speakers ——— */}
-      <section className="section section--black" id="speakers">
-        <div className="section-inner">
-          <h2 className="section-title">Speakers</h2>
-          <p className="section-placeholder">Speakers content coming soon.</p>
+      <section className="section section--black speakers-section" id="speakers">
+        <div className="speakers-container">
+          <h2 className="section-title speakers-title">Speakers</h2>
+          <div className="speakers-grid">
+            <div className="speaker-card">
+              <img 
+                src={asimKhanImage} 
+                alt="Asim Khan" 
+                className="speaker-image"
+              />
+              <div className="speaker-info">
+                <h3 className="speaker-name">Asim Khan</h3>
+                <p className="speaker-title">Speaker Title</p>
+              </div>
+            </div>
+            <div className="speaker-card">
+              <img 
+                src={shaqurRehmanImage} 
+                alt="Shaqur Rehman" 
+                className="speaker-image"
+              />
+              <div className="speaker-info">
+                <h3 className="speaker-name">Shaqur Rehman</h3>
+                <p className="speaker-title">Speaker Title</p>
+              </div>
+            </div>
+            <div className="speaker-card">
+              <img 
+                src={umerSulemanImage} 
+                alt="Umer Suleman" 
+                className="speaker-image"
+              />
+              <div className="speaker-info">
+                <h3 className="speaker-name">Umer Suleman</h3>
+                <p className="speaker-title">Speaker Title</p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* ——— FAQ ——— */}
-      <section className="section section--black" id="faq">
-        <div className="section-inner">
+      <section className="section section--black faq-section" id="faq">
+        <div className="faq-container">
           <h2 className="section-title">Frequently Asked Questions</h2>
-          <p className="section-placeholder">FAQ content coming soon.</p>
+          <div className="faq-list">
+            <div className="faq-item" onClick={() => setOpenFaqIndex(openFaqIndex === 0 ? null : 0)}>
+              <div className="faq-question">
+                <span>What is the date and time of the charity dinner?</span>
+                <span className="faq-icon">{openFaqIndex === 0 ? "−" : "+"}</span>
+              </div>
+              <div className={`faq-answer ${openFaqIndex === 0 ? "is-open" : ""}`}>
+                <p>Placeholder answer for question 1. This is where the detailed answer will be displayed when the question is expanded.</p>
+              </div>
+            </div>
+
+            <div className="faq-item" onClick={() => setOpenFaqIndex(openFaqIndex === 1 ? null : 1)}>
+              <div className="faq-question">
+                <span>Where will the event take place?</span>
+                <span className="faq-icon">{openFaqIndex === 1 ? "−" : "+"}</span>
+              </div>
+              <div className={`faq-answer ${openFaqIndex === 1 ? "is-open" : ""}`}>
+                <p>Placeholder answer for question 2. This is where the detailed answer will be displayed when the question is expanded.</p>
+              </div>
+            </div>
+
+            <div className="faq-item" onClick={() => setOpenFaqIndex(openFaqIndex === 2 ? null : 2)}>
+              <div className="faq-question">
+                <span>What is included in the ticket price?</span>
+                <span className="faq-icon">{openFaqIndex === 2 ? "−" : "+"}</span>
+              </div>
+              <div className={`faq-answer ${openFaqIndex === 2 ? "is-open" : ""}`}>
+                <p>Placeholder answer for question 3. This is where the detailed answer will be displayed when the question is expanded.</p>
+              </div>
+            </div>
+
+            <div className="faq-item" onClick={() => setOpenFaqIndex(openFaqIndex === 3 ? null : 3)}>
+              <div className="faq-question">
+                <span>Is there parking available at the venue?</span>
+                <span className="faq-icon">{openFaqIndex === 3 ? "−" : "+"}</span>
+              </div>
+              <div className={`faq-answer ${openFaqIndex === 3 ? "is-open" : ""}`}>
+                <p>Placeholder answer for question 4. This is where the detailed answer will be displayed when the question is expanded.</p>
+              </div>
+            </div>
+
+            <div className="faq-item" onClick={() => setOpenFaqIndex(openFaqIndex === 4 ? null : 4)}>
+              <div className="faq-question">
+                <span>Can I purchase tickets at the door?</span>
+                <span className="faq-icon">{openFaqIndex === 4 ? "−" : "+"}</span>
+              </div>
+              <div className={`faq-answer ${openFaqIndex === 4 ? "is-open" : ""}`}>
+                <p>Placeholder answer for question 5. This is where the detailed answer will be displayed when the question is expanded.</p>
+              </div>
+            </div>
+
+            <div className="faq-item" onClick={() => setOpenFaqIndex(openFaqIndex === 5 ? null : 5)}>
+              <div className="faq-question">
+                <span>What should I wear to the event?</span>
+                <span className="faq-icon">{openFaqIndex === 5 ? "−" : "+"}</span>
+              </div>
+              <div className={`faq-answer ${openFaqIndex === 5 ? "is-open" : ""}`}>
+                <p>Placeholder answer for question 6. This is where the detailed answer will be displayed when the question is expanded.</p>
+              </div>
+            </div>
+
+            <div className="faq-item" onClick={() => setOpenFaqIndex(openFaqIndex === 6 ? null : 6)}>
+              <div className="faq-question">
+                <span>Will there be vegetarian or special dietary options available?</span>
+                <span className="faq-icon">{openFaqIndex === 6 ? "−" : "+"}</span>
+              </div>
+              <div className={`faq-answer ${openFaqIndex === 6 ? "is-open" : ""}`}>
+                <p>Placeholder answer for question 7. This is where the detailed answer will be displayed when the question is expanded.</p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </main>
