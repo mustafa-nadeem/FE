@@ -221,6 +221,19 @@ function App() {
         ? 0 - ((venueProgress - 0.347) / 0.348) * 500
         : -500 - ((venueProgress - 0.695) / 0.305) * (2 * venueImageStep - 500 + VENUE_FINAL_LIFT);
 
+  const scrollToVenueFinal = () => {
+    const section = venueRef.current;
+    if (!section) return;
+    const sectionHeight = section.offsetHeight;
+    const windowHeight = window.innerHeight;
+    const entryThreshold = windowHeight * 0.35;
+    const scrollRangeToComplete = 0.6 * (entryThreshold + sectionHeight);
+    const targetScrollY = section.offsetTop - (entryThreshold - scrollRangeToComplete);
+    const maxScrollY = Math.max(0, section.offsetTop + sectionHeight - windowHeight);
+    const clampedY = Math.max(0, Math.min(targetScrollY, maxScrollY));
+    window.scrollTo({ top: clampedY, behavior: "smooth" });
+  };
+
   return (
     <main className="app">
       <div className="hero-section" ref={heroRef}>
@@ -251,7 +264,7 @@ function App() {
         className={`navbar ${animationPhase === "content-in" ? "animate-in" : ""}`}
       >
         <div className="navbar-links">
-          <a href="#venue" className="navbar-link">
+          <a href="#venue" className="navbar-link" onClick={(e) => { e.preventDefault(); scrollToVenueFinal(); }}>
             Venue
           </a>
           <a href="#topic" className="navbar-link">
@@ -468,9 +481,16 @@ function App() {
                 </span>
               </p>
               <p className="venue-paragraph">
-                <span className="venue-text-fill" style={{ "--fill-progress": `${venueProgress < 0.695 ? 0 : Math.min(100, ((venueProgress - 0.695) / 0.305) * 100)}%` }}>
-                  Royal Nawaab Prevail
-                </span>
+                <a
+                  href="https://www.google.com/maps/place/Royal+Nawaab+Perivale/@51.5337869,-0.3226802,17z/data=!3m1!4b1!4m6!3m5!1s0x48761267bc9cecbf:0x18d70a62ce4449f5!8m2!3d51.5337836!4d-0.3201053!16s%2Fg%2F11b6pw_2rb?entry=ttu"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="venue-link"
+                >
+                  <span className="venue-link-text venue-text-fill" style={{ "--fill-progress": `${venueProgress < 0.695 ? 0 : Math.min(100, ((venueProgress - 0.695) / 0.305) * 100)}%` }}>
+                    Royal Nawaab Prevail
+                  </span><span className="venue-link-arrow"> →</span>
+                </a>
               </p>
             </div>
           </div>
