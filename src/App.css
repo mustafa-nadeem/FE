@@ -223,6 +223,44 @@
   transition: none;
 }
 
+.venue-link {
+  display: inline-block;
+  cursor: pointer;
+  text-decoration: none;
+  padding-bottom: 4px;
+}
+
+.venue-link-text {
+  position: relative;
+  display: inline-block;
+}
+
+.venue-link-text::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  background: #fff;
+  width: var(--fill-progress);
+  transition: none;
+}
+
+.venue-link:hover {
+  opacity: 0.9;
+}
+
+.venue-link-arrow {
+  color: #fff;
+  -webkit-text-fill-color: #fff;
+  font-size: 0.7em;
+  vertical-align: 0.05em;
+}
+
+.venue-date-1st {
+  font-size: 1.35em;
+}
+
 @media (max-width: 1024px) {
   .venue-sticky {
     padding: 2rem 0;
@@ -1660,6 +1698,44 @@
   background-clip: text;
   color: transparent;
   transition: none;
+}
+
+.venue-link {
+  display: inline-block;
+  cursor: pointer;
+  text-decoration: none;
+  padding-bottom: 4px;
+}
+
+.venue-link-text {
+  position: relative;
+  display: inline-block;
+}
+
+.venue-link-text::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  background: #fff;
+  width: var(--fill-progress);
+  transition: none;
+}
+
+.venue-link:hover {
+  opacity: 0.9;
+}
+
+.venue-link-arrow {
+  color: #fff;
+  -webkit-text-fill-color: #fff;
+  font-size: 0.7em;
+  vertical-align: 0.05em;
+}
+
+.venue-date-1st {
+  font-size: 1.35em;
 }
 
 @media (max-width: 1024px) {
