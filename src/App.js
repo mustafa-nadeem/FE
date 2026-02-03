@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import "./App.css";
 import familyEventsLogo from "./sponsors-logo/family-events.png";
 import readFoundationLogo from "./sponsors-logo/muslim-in-need.png";
+import impactEventsLogo from "./sponsors-logo/impact-events.png";
 import maskGroupImage from "./Mask group123.png";
 import charityDinnerLogo2 from "./Charitry-Dinner-logo2.svg";
 import asimKhanImage from "./speakers/Asim Khan 1.jpg";
@@ -29,6 +30,7 @@ function App() {
   const countdownRef = useRef(null);
 
   const [venueProgress, setVenueProgress] = useState(0);
+  const maxVenueProgressRef = useRef(0); // Track max progress for navbar navigation
   const venueRef = useRef(null);
   const heroRef = useRef(null);
   const [logoVisible, setLogoVisible] = useState(true);
@@ -212,6 +214,11 @@ function App() {
       const progress = rawProgress < 0.05 ? 0 : (rawProgress - 0.05) / 0.95;
 
       setVenueProgress(progress);
+      
+      // Track max progress achieved
+      if (progress > maxVenueProgressRef.current) {
+        maxVenueProgressRef.current = progress;
+      }
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -219,6 +226,46 @@ function App() {
 
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // ——— Venue nav click handler - restore to max progress ———
+  const handleVenueNavClick = (e) => {
+    e.preventDefault();
+    
+    const section = venueRef.current;
+    if (!section) return;
+    
+    const maxProgress = maxVenueProgressRef.current;
+    
+    if (maxProgress === 0) {
+      // User hasn't scrolled through venue yet - scroll to start of section
+      section.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      // Calculate scroll position that corresponds to their max progress
+      const rect = section.getBoundingClientRect();
+      const sectionTop = window.scrollY + rect.top;
+      const windowHeight = window.innerHeight;
+      const sectionHeight = rect.height;
+      
+      const entryThreshold = windowHeight * 0.35;
+      const scrollRangeToComplete = 0.6 * (entryThreshold + sectionHeight);
+      
+      // Reverse the progress formula to get scroll position
+      // progress = (rawProgress - 0.05) / 0.95
+      // rawProgress = progress * 0.95 + 0.05
+      const rawProgress = maxProgress * 0.95 + 0.05;
+      
+      // rawProgress = (entryThreshold - rect.top) / scrollRangeToComplete
+      // entryThreshold - rect.top = rawProgress * scrollRangeToComplete
+      // rect.top = entryThreshold - rawProgress * scrollRangeToComplete
+      // But rect.top = sectionTop - scrollY
+      // sectionTop - scrollY = entryThreshold - rawProgress * scrollRangeToComplete
+      // scrollY = sectionTop - entryThreshold + rawProgress * scrollRangeToComplete
+      
+      const targetScrollY = sectionTop - entryThreshold + (rawProgress * scrollRangeToComplete);
+      
+      window.scrollTo({ top: targetScrollY, behavior: 'instant' });
+    }
+  };
 
   // ——— Scroll detection for logo visibility ———
   useEffect(() => {
@@ -418,7 +465,7 @@ function App() {
         >
           {/* Desktop Navigation */}
           <div className="navbar-links">
-            <a href="#venue" className={`navbar-link ${activeNavLink === "venue" ? "active" : ""}`}>
+            <a href="#venue" className={`navbar-link ${activeNavLink === "venue" ? "active" : ""}`} onClick={handleVenueNavClick}>
               Venue
             </a>
             <a href="#topic" className={`navbar-link ${activeNavLink === "topic" ? "active" : ""}`}>
@@ -466,7 +513,7 @@ function App() {
               <a 
                 href="#venue" 
                 className={`mobile-menu-link ${activeNavLink === "venue" ? "active" : ""}`}
-                onClick={() => setIsMenuOpen(false)}
+                onClick={(e) => { handleVenueNavClick(e); setIsMenuOpen(false); }}
               >
                 Venue
                 <span className="mobile-menu-arrow">›</span>
@@ -566,7 +613,15 @@ function App() {
           className={`partner-strip ${animationPhase === "content-in" ? "animate-in" : ""}`}
         >
           <div className="partner-item">
-            <p className="partner-label">Event Partner</p>
+            <p className="partner-label">Event Organiser</p>
+            <img
+              src={impactEventsLogo}
+              alt="Impact Events"
+              className="partner-logo"
+            />
+          </div>
+          <div className="partner-item">
+            <p className="partner-label">Event Sponsor</p>
             <img
               src={familyEventsLogo}
               alt="Family Events"
@@ -806,12 +861,10 @@ function App() {
               />
               <div className="speaker-info">
                 <p className="speaker-description">
-                  A passionate scholar dedicated to sharing the beauty of
-                  Islamic knowledge, inspiring hearts through profound wisdom
-                  and spiritual guidance.
+                  A dynamic speaker known for his insights on personal growth, community development, and purposeful living. Imam Asim draws from real-life experiences to deliver practical lessons that inspire audiences to think deeper and act with confidence.
                 </p>
+                <p className="speaker-title">Imam</p>
                 <h3 className="speaker-name">Asim Khan</h3>
-                <p className="speaker-title">Speaker Title</p>
               </div>
             </div>
             <div 
@@ -825,12 +878,10 @@ function App() {
               />
               <div className="speaker-info">
                 <p className="speaker-description">
-                  An engaging speaker who connects faith with everyday life,
-                  bringing clarity and inspiration to communities across the
-                  nation.
+                  An engaging and motivational speaker with a passion for empowering the next generation. Shaqur focuses on mindset, identity, and navigating modern challenges while staying true to strong values and principles.
                 </p>
+                <p className="speaker-title">Sheikh</p>
                 <h3 className="speaker-name">Shaqur Rehman</h3>
-                <p className="speaker-title">Speaker Title</p>
               </div>
             </div>
             <div 
@@ -844,12 +895,10 @@ function App() {
               />
               <div className="speaker-info">
                 <p className="speaker-description">
-                  A thought leader bridging Islamic ethics with contemporary
-                  challenges, empowering Muslims to excel in both faith and
-                  worldly pursuits.
+                  A respected community figure and inspiring voice who connects deeply with young audiences. Umer shares reflections on faith, character, and everyday challenges, offering relatable guidance on how to live with purpose and balance in today's world.
                 </p>
+                <p className="speaker-title">Ustadh</p>
                 <h3 className="speaker-name">Umer Suleman</h3>
-                <p className="speaker-title">Speaker Title</p>
               </div>
             </div>
           </div>
@@ -1017,9 +1066,9 @@ function App() {
             <div className="footer-content">
               <div className="footer-header">
                 <img src={readFoundationLogo} alt="Muslims in Need" className="footer-logo" />
-                <p className="footer-label">CHARITY PARTNER</p>
+                <h3 className="footer-label">CHARITY PARTNER</h3>
               </div>
-              <h3 className="footer-heading">Hope Through Action.</h3>
+              <p className="footer-heading">Hope Through Action.</p>
               <p className="footer-text">
                 Muslims in Need operates across 25+ countries, responding to humanitarian crises with urgency and compassion.
                 From the devastation in Gaza and Palestine to the famine sweeping Yemen and the displacement crises in Syria,
