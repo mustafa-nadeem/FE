@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import "./App.css";
 import familyEventsLogo from "./sponsors-logo/family-events.png";
-import readFoundationLogo from "./sponsors-logo/read-foundation.png";
+import readFoundationLogo from "./sponsors-logo/muslim-in-need.png";
 import maskGroupImage from "./Mask group123.png";
 import charityDinnerLogo2 from "./Charitry-Dinner-logo2.svg";
 import asimKhanImage from "./speakers/Asim Khan 1.jpg";
 import shaqurRehmanImage from "./speakers/Shaqur Rehman 2 (1).png";
 import umerSulemanImage from "./speakers/Umer Suleman 1 (1).jpeg";
+import gazaEmergencyImage from "./mincharity-gaza-emergency2-scaled.webp";
 
 const VENUE_IMAGE_GAP = 24;
 const VENUE_IMAGE_SIZE = 568;
@@ -41,6 +42,7 @@ function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isInHero, setIsInHero] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [activeSpeakerIndex, setActiveSpeakerIndex] = useState(null);
 
   // ——— Always start from top on page load ———
   useEffect(() => {
@@ -433,6 +435,13 @@ function App() {
 
         </nav>
 
+        {/* Mobile Sticky Book Now Button - appears when logo disappears */}
+        <button 
+          className={`mobile-sticky-book-button ${animationPhase === "content-in" ? "animate-in" : ""} ${isInHero ? "hidden" : ""}`}
+        >
+          Book Now
+        </button>
+
         {/* Mobile Menu Button - pill shape with grid icon and "Menu" text */}
         <button 
           className={`mobile-menu-button ${animationPhase === "content-in" ? "animate-in" : ""} ${isMenuOpen ? "menu-open" : ""}`}
@@ -492,7 +501,7 @@ function App() {
             </button>
             <div className="mobile-menu-footer">
               <div className="mobile-menu-footer-links">
-                <a href="#" className="mobile-footer-link">Terms & Conditions</a>
+                <a href="https://charitydinner.co.uk/terms/" className="mobile-footer-link" target="_blank" rel="noopener noreferrer">Terms & Conditions</a>
               </div>
               <p className="mobile-footer-contact">
                 <a href="mailto:info@charitydinner.co.uk">info@charitydinner.co.uk</a>
@@ -696,11 +705,9 @@ function App() {
       >
         <div className="topic-container">
           <div className="topic-content">
-            <h2 className="topic-heading">In the Blessed Month of Ramadan,</h2>
-            <p className="topic-subheading">
-              How Can We Attain Allah's Mercy and Have Our Sins Completely
-              Forgiven?
-            </p>
+            <h2 className="section-title topic-title">
+              How Can We Attain Allah's Forgiveness In The Month of Ramadan
+            </h2>
             <p className="topic-description">
               How can we secure the immense reward of Laylatul Qadr? How do we
               become among those whom Allah loves?
@@ -749,7 +756,10 @@ function App() {
         <div className="speakers-container">
           <h2 className="section-title speakers-title">Speakers</h2>
           <div className="speakers-grid">
-            <div className="speaker-card">
+            <div 
+              className={`speaker-card ${activeSpeakerIndex === 0 ? "active" : ""}`}
+              onClick={() => setActiveSpeakerIndex(activeSpeakerIndex === 0 ? null : 0)}
+            >
               <img
                 src={asimKhanImage}
                 alt="Asim Khan"
@@ -765,7 +775,10 @@ function App() {
                 <p className="speaker-title">Speaker Title</p>
               </div>
             </div>
-            <div className="speaker-card">
+            <div 
+              className={`speaker-card ${activeSpeakerIndex === 1 ? "active" : ""}`}
+              onClick={() => setActiveSpeakerIndex(activeSpeakerIndex === 1 ? null : 1)}
+            >
               <img
                 src={shaqurRehmanImage}
                 alt="Shaqur Rehman"
@@ -781,7 +794,10 @@ function App() {
                 <p className="speaker-title">Speaker Title</p>
               </div>
             </div>
-            <div className="speaker-card">
+            <div 
+              className={`speaker-card ${activeSpeakerIndex === 2 ? "active" : ""}`}
+              onClick={() => setActiveSpeakerIndex(activeSpeakerIndex === 2 ? null : 2)}
+            >
               <img
                 src={umerSulemanImage}
                 alt="Umer Suleman"
@@ -958,22 +974,35 @@ function App() {
       {/* ——— Footer ——— */}
       <footer className="footer-section">
         <div className="footer-container">
-          <div className="footer-content">
-            <div className="footer-header">
-              <img src={readFoundationLogo} alt="READ Foundation" className="footer-logo" />
-              <p className="footer-label">CHARITY PARTNER</p>
+          <div className="footer-wrapper">
+            <div className="footer-content">
+              <div className="footer-header">
+                <img src={readFoundationLogo} alt="Muslims in Need" className="footer-logo" />
+                <p className="footer-label">CHARITY PARTNER</p>
+              </div>
+              <h3 className="footer-heading">Hope Through Action.</h3>
+              <p className="footer-text">
+                Muslims in Need operates across 25+ countries, responding to humanitarian crises with urgency and compassion.
+                From the devastation in Gaza and Palestine to the famine sweeping Yemen and the displacement crises in Syria,
+                families face unimaginable suffering with nowhere to turn. At Muslims in Need, we are committed to delivering
+                emergency relief and sustainable support to those facing poverty, conflict, and disaster—serving the most
+                vulnerable regardless of race, religion, or background.
+              </p>
+              <p className="footer-text">
+                Our work transcends temporary aid—we provide comprehensive humanitarian support including emergency food
+                parcels, clean water, shelter, and medical care to those affected by conflict and natural disaster. Equally
+                important, we invest in long-term solutions that help communities rebuild and regain their dignity. Together,
+                we can offer vulnerable families not just survival, but the genuine opportunity to restore their lives and
+                secure a brighter future for generations to come.
+              </p>
             </div>
-            <h3 className="footer-heading">Education in Emergencies.</h3>
-            <p className="footer-text">
-              The escalating crises in Lebanon, Gaza, Yemen and Syria have displaced millions, forcing families into overcrowded, crumbling shelters with little to no resources to face the harsh winter. Amidst these unimaginable hardships, children are at risk of losing not just their homes but their futures. At READ Foundation, we are committed to protecting their right to education and hope.
-            </p>
-            <p className="footer-text">
-              Our work extends beyond classrooms—we are delivering critical psychosocial support to help children heal and access the education they desperately need. Additionally, we're providing life-saving relief: food, winter supplies, shelter and hygiene kits to ensure families survive the harsh realities they face daily. Together, we can offer these innocent lives not just survival but the chance to thrive.
-            </p>
+            <div className="footer-image-wrapper">
+              <img src={gazaEmergencyImage} alt="Gaza Emergency" className="footer-image" />
+            </div>
           </div>
           <div className="footer-bottom">
             <div className="footer-links">
-              <a href="#" className="footer-link">Terms & Conditions</a>
+              <a href="https://charitydinner.co.uk/terms/" className="footer-link" target="_blank" rel="noopener noreferrer">Terms & Conditions</a>
             </div>
             <p className="footer-contact">Contact: <a href="mailto:info@charitydinner.co.uk">info@charitydinner.co.uk</a></p>
           </div>
