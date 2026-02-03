@@ -658,11 +658,21 @@ function App() {
               />
             </div>
             <div className="venue-text">
+              <h2 className="venue-heading">
+                <span
+                  className="venue-heading-fill"
+                  style={{
+                    "--fill-progress": `${venueProgress <= 0 ? 0 : venueProgress >= 0.2 ? 100 : (venueProgress / 0.2) * 100}%`,
+                  }}
+                >
+                  Venue
+                </span>
+              </h2>
               <p className="venue-paragraph">
                 <span
                   className="venue-text-fill"
                   style={{
-                    "--fill-progress": `${venueProgress <= 0 ? 0 : Math.min(100, (venueProgress / 0.347) * 100)}%`,
+                    "--fill-progress": `${venueProgress < 0.2 ? 0 : venueProgress >= 0.547 ? 100 : ((venueProgress - 0.2) / (0.547 - 0.2)) * 100}%`,
                   }}
                 >
                   Enjoy a memorable Iftar experience catered by Royal Nawaab,
@@ -674,7 +684,7 @@ function App() {
                 <span
                   className="venue-text-fill"
                   style={{
-                    "--fill-progress": `${venueProgress < 0.347 ? 0 : Math.min(100, ((venueProgress - 0.347) / 0.348) * 100)}%`,
+                    "--fill-progress": `${venueProgress < 0.547 ? 0 : venueProgress >= 0.895 ? 100 : ((venueProgress - 0.547) / (0.895 - 0.547)) * 100}%`,
                   }}
                 >
                   From classic starters to satisfying mains and sweet desserts,
@@ -686,7 +696,7 @@ function App() {
                 <span
                   className="venue-text-fill venue-date-1st"
                   style={{
-                    "--fill-progress": `${venueProgress < 0.695 ? 0 : venueProgress >= 0.797 ? 100 : ((venueProgress - 0.695) / (0.797 - 0.695)) * 100}%`,
+                    "--fill-progress": `${venueProgress < 0.895 ? 0 : venueProgress >= 0.9125 ? 100 : ((venueProgress - 0.895) / (0.9125 - 0.895)) * 100}%`,
                   }}
                 >
                   1{' '}
@@ -694,7 +704,7 @@ function App() {
                 <span
                   className="venue-text-fill"
                   style={{
-                    "--fill-progress": `${venueProgress < 0.797 ? 0 : venueProgress >= 0.899 ? 100 : ((venueProgress - 0.797) / (0.899 - 0.797)) * 100}%`,
+                    "--fill-progress": `${venueProgress < 0.9125 ? 0 : venueProgress >= 0.965 ? 100 : ((venueProgress - 0.9125) / (0.965 - 0.9125)) * 100}%`,
                   }}
                 >
                   st of March at{' '}
@@ -708,14 +718,14 @@ function App() {
                   <span
                     className="venue-link-text venue-text-fill"
                     style={{
-                      "--fill-progress": `${venueProgress < 0.899 ? 0 : Math.min(100, ((venueProgress - 0.899) / (1 - 0.899)) * 100)}%`,
+                      "--fill-progress": `${venueProgress < 0.965 ? 0 : Math.min(100, ((venueProgress - 0.965) / (1 - 0.965)) * 100)}%`,
                     }}
                   >
                     Royal Nawaab Prevail
                   </span>
                   <span
                     className="venue-link-arrow"
-                    style={{ opacity: venueProgress >= 0.95 ? 1 : 0 }}
+                    style={{ opacity: venueProgress >= 0.99 ? 1 : 0 }}
                   >
                     {' '}→
                   </span>
