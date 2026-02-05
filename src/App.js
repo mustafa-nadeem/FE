@@ -191,80 +191,21 @@ function App() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // ——— Scroll-based venue animation ———
-  useEffect(() => {
-    const handleScroll = () => {
-      const section = venueRef.current;
-      if (!section) return;
 
-      const rect = section.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-      const sectionHeight = rect.height;
-
-      const entryThreshold = windowHeight * 0.35;
-      const scrollRangeToComplete = 0.6 * (entryThreshold + sectionHeight);
-      const rawProgress =
-        rect.top > entryThreshold
-          ? 0
-          : Math.max(
-              0,
-              Math.min(1, (entryThreshold - rect.top) / scrollRangeToComplete),
-            );
-
-      const progress = rawProgress < 0.05 ? 0 : (rawProgress - 0.05) / 0.95;
-
-      setVenueProgress(progress);
-      
-      // Track max progress achieved
-      if (progress > maxVenueProgressRef.current) {
-        maxVenueProgressRef.current = progress;
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // ——— Venue nav click handler - restore to max progress ———
+  // ——— Venue nav click handler ———
   const handleVenueNavClick = (e) => {
     e.preventDefault();
-    
     const section = venueRef.current;
     if (!section) return;
-    
-    const maxProgress = maxVenueProgressRef.current;
-    
-    if (maxProgress === 0) {
-      // User hasn't scrolled through venue yet - scroll to start of section
-      section.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      // Calculate scroll position that corresponds to their max progress
-      const rect = section.getBoundingClientRect();
-      const sectionTop = window.scrollY + rect.top;
-      const windowHeight = window.innerHeight;
-      const sectionHeight = rect.height;
-      
-      const entryThreshold = windowHeight * 0.35;
-      const scrollRangeToComplete = 0.6 * (entryThreshold + sectionHeight);
-      
-      // Reverse the progress formula to get scroll position
-      // progress = (rawProgress - 0.05) / 0.95
-      // rawProgress = progress * 0.95 + 0.05
-      const rawProgress = maxProgress * 0.95 + 0.05;
-      
-      // rawProgress = (entryThreshold - rect.top) / scrollRangeToComplete
-      // entryThreshold - rect.top = rawProgress * scrollRangeToComplete
-      // rect.top = entryThreshold - rawProgress * scrollRangeToComplete
-      // But rect.top = sectionTop - scrollY
-      // sectionTop - scrollY = entryThreshold - rawProgress * scrollRangeToComplete
-      // scrollY = sectionTop - entryThreshold + rawProgress * scrollRangeToComplete
-      
-      const targetScrollY = sectionTop - entryThreshold + (rawProgress * scrollRangeToComplete);
-      
-      window.scrollTo({ top: targetScrollY, behavior: 'instant' });
-    }
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  // ——— Section nav click handlers - scroll to start of section ———
+  const handleSectionNavClick = (e, sectionRef) => {
+    e.preventDefault();
+    const section = sectionRef.current;
+    if (!section) return;
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   // ——— Scroll detection for logo visibility ———
@@ -478,16 +419,19 @@ function App() {
               FAQ
             </a>
           </div>
-          <button className="book-now-button">Book Now</button>
+          <a href="https://www.tickettailor.com/events/familyevents2/2052743" target="_blank" rel="noopener noreferrer" className="book-now-button">Book Now</a>
 
         </nav>
 
         {/* Mobile Sticky Book Now Button - appears when logo disappears */}
-        <button 
+        <a 
+          href="https://www.tickettailor.com/events/familyevents2/2052743"
+          target="_blank"
+          rel="noopener noreferrer"
           className={`mobile-sticky-book-button ${animationPhase === "content-in" ? "animate-in" : ""} ${isInHero ? "hidden" : ""}`}
         >
           Book Now
-        </button>
+        </a>
 
         {/* Mobile Menu Button - pill shape with grid icon and "Menu" text */}
         <button 
@@ -521,7 +465,7 @@ function App() {
               <a 
                 href="#topic" 
                 className={`mobile-menu-link ${activeNavLink === "topic" ? "active" : ""}`}
-                onClick={() => setIsMenuOpen(false)}
+                onClick={(e) => { handleSectionNavClick(e, topicRef); setIsMenuOpen(false); }}
               >
                 Topic
                 <span className="mobile-menu-arrow">›</span>
@@ -529,7 +473,7 @@ function App() {
               <a 
                 href="#speakers" 
                 className={`mobile-menu-link ${activeNavLink === "speakers" ? "active" : ""}`}
-                onClick={() => setIsMenuOpen(false)}
+                onClick={(e) => { handleSectionNavClick(e, speakersRef); setIsMenuOpen(false); }}
               >
                 Speakers
                 <span className="mobile-menu-arrow">›</span>
@@ -537,15 +481,21 @@ function App() {
               <a 
                 href="#faq" 
                 className={`mobile-menu-link ${activeNavLink === "faq" ? "active" : ""}`}
-                onClick={() => setIsMenuOpen(false)}
+                onClick={(e) => { handleSectionNavClick(e, faqRef); setIsMenuOpen(false); }}
               >
                 FAQ
                 <span className="mobile-menu-arrow">›</span>
               </a>
             </div>
-            <button className="mobile-book-now-button" onClick={() => setIsMenuOpen(false)}>
+            <a 
+              href="https://www.tickettailor.com/events/familyevents2/2052743"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mobile-book-now-button"
+              onClick={() => setIsMenuOpen(false)}
+            >
               Book Now
-            </button>
+            </a>
             <div className="mobile-menu-footer">
               <div className="mobile-menu-footer-links">
                 <a href="https://charitydinner.co.uk/terms/" className="mobile-footer-link" target="_blank" rel="noopener noreferrer">Terms & Conditions</a>
@@ -558,7 +508,7 @@ function App() {
         </div>
 
         {/* Heading wrapper - heading exactly centered, image above, content below */}
-        <div className="hero-heading-wrapper">
+        <div className={`hero-heading-wrapper ${animationPhase === "content-in" ? "position-final" : ""}`}>
           {/* Image - animates in above the heading */}
           <img
             src={maskGroupImage}
@@ -604,7 +554,17 @@ function App() {
               A luxury evening of inspirational knowledge and action,
               <br /> paired with a delicious iftar in West London.
             </p>
-            <button className="book-now-button">Book Now</button>
+            <div className="hero-discount-banner">
+              <p className="hero-discount-text">
+                <span className="hero-discount-label">50% Discount</span>
+                <span className="hero-discount-price">
+                  <span className="hero-price-old">£20</span>
+                  <span className="hero-price-new">£10</span>
+                </span>
+              </p>
+              <p className="hero-discount-date">Valid until 10th Feb</p>
+            </div>
+            <a href="https://www.tickettailor.com/events/familyevents2/2052743" target="_blank" rel="noopener noreferrer" className="book-now-button">Book Now</a>
           </div>
         </div>
 
@@ -679,109 +639,33 @@ function App() {
                 src="/royalnawaab/food1.jpg"
                 alt="Royal Nawaab cuisine"
                 className="venue-image"
-                style={{
-                  transform: isMobile
-                    ? `translateX(${getImageTransformX(0)}px) scale(${getImageScale(0)})`
-                    : `translateY(${getImageTransformY(0)}px) scale(${getImageScale(0)})`,
-                  opacity: venueProgress >= 0 ? 1 : 0,
-                  zIndex: 3,
-                }}
-              />
-              <img
-                src="/royalnawaab/food2.jpg"
-                alt="Royal Nawaab dishes"
-                className="venue-image"
-                style={{
-                  transform: isMobile
-                    ? `translateX(${getImageTransformX(1)}px) scale(${getImageScale(1)})`
-                    : `translateY(${getImageTransformY(1)}px) scale(${getImageScale(1)})`,
-                  opacity: venueProgress >= 0 ? 1 : 0,
-                  zIndex: 2,
-                }}
-              />
-              <img
-                src="/royalnawaab/inside.jpg"
-                alt="Royal Nawaab interior"
-                className="venue-image"
-                style={{
-                  transform: isMobile
-                    ? `translateX(${getImageTransformX(2)}px) scale(${getImageScale(2)})`
-                    : `translateY(${getImageTransformY(2)}px) scale(${getImageScale(2)})`,
-                  opacity: venueProgress >= 0 ? 1 : 0,
-                  zIndex: 1,
-                }}
               />
             </div>
             <div className="venue-text">
               <h2 className="venue-heading">
-                <span
-                  className="venue-heading-fill"
-                  style={{
-                    "--fill-progress": `${venueProgress <= 0 ? 0 : venueProgress >= 0.2 ? 100 : (venueProgress / 0.2) * 100}%`,
-                  }}
-                >
-                  Venue
-                </span>
+                Venue
               </h2>
+              <h3 className="venue-subheading">
+                Royal Nawab | West London
+              </h3>
               <p className="venue-paragraph">
-                <span
-                  className="venue-text-fill"
-                  style={{
-                    "--fill-progress": `${venueProgress < 0.2 ? 0 : venueProgress >= 0.547 ? 100 : ((venueProgress - 0.2) / (0.547 - 0.2)) * 100}%`,
-                  }}
-                >
-                  Enjoy a memorable Iftar experience catered by Royal Nawaab,
-                  featuring a carefully curated three-course buffet with
-                  authentic flavors and premium ingredients.
-                </span>
+                Join us at Royal Nawaab for a special "Finding Forgiveness in Ramadan" Iftar—an evening of reflection, renewal, and togetherness. As we break our fast, enjoy a luxurious Iftar feast of authentic Pakistani and Indian cuisine in an elegant setting, creating space for meaningful conversation and spiritual connection.
               </p>
               <p className="venue-paragraph">
-                <span
-                  className="venue-text-fill"
-                  style={{
-                    "--fill-progress": `${venueProgress < 0.547 ? 0 : venueProgress >= 0.895 ? 100 : ((venueProgress - 0.547) / (0.895 - 0.547)) * 100}%`,
-                  }}
-                >
-                  From classic starters to satisfying mains and sweet desserts,
-                  this elegant spread is perfect for sharing and celebrating
-                  together.
-                </span>
+                Come together with family and friends to nourish both heart and soul during this blessed month.
               </p>
               <p className="venue-paragraph">
-                <span
-                  className="venue-text-fill venue-date-1st"
-                  style={{
-                    "--fill-progress": `${venueProgress < 0.895 ? 0 : venueProgress >= 0.9125 ? 100 : ((venueProgress - 0.895) / (0.9125 - 0.895)) * 100}%`,
-                  }}
-                >
-                  1{' '}
-                </span>
-                <span
-                  className="venue-text-fill"
-                  style={{
-                    "--fill-progress": `${venueProgress < 0.9125 ? 0 : venueProgress >= 0.965 ? 100 : ((venueProgress - 0.9125) / (0.965 - 0.9125)) * 100}%`,
-                  }}
-                >
-                  st of March at{' '}
-                </span>
+                <span className="venue-date-1st">1</span>st of March at{' '}
                 <a
                   href="https://www.google.com/maps/place/Royal+Nawaab+Perivale/@51.5337869,-0.3226802,17z/data=!3m1!4b1!4m6!3m5!1s0x48761267bc9cecbf:0x18d70a62ce4449f5!8m2!3d51.5337836!4d-0.3201053!16s%2Fg%2F11b6pw_2rb?entry=ttu"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="venue-link"
                 >
-                  <span
-                    className="venue-link-text venue-text-fill"
-                    style={{
-                      "--fill-progress": `${venueProgress < 0.965 ? 0 : Math.min(100, ((venueProgress - 0.965) / (1 - 0.965)) * 100)}%`,
-                    }}
-                  >
-                    Royal Nawaab Prevail
+                  <span className="venue-link-text">
+                    Royal Nawaab Perivale
                   </span>
-                  <span
-                    className="venue-link-arrow"
-                    style={{ opacity: venueProgress >= 0.99 ? 1 : 0 }}
-                  >
+                  <span className="venue-link-arrow">
                     {' '}→
                   </span>
                 </a>
@@ -800,43 +684,41 @@ function App() {
         <div className="topic-container">
           <div className="topic-content">
             <h2 className="section-title topic-title">
-              How Can We Attain Allah's Forgiveness In The Month of Ramadan
+              Finding Forgiveness
             </h2>
+            <h3 className="topic-subheading">
+              in the Month of Ramadan
+            </h3>
             <p className="topic-description">
-              How can we secure the immense reward of Laylatul Qadr? How do we
-              become among those whom Allah loves?
+              Join us for a special Ramadan Iftar & Spiritual Programme dedicated to reflection, renewal, and returning to Allah ﷻ. As we enter the most sacred days of the month, this gathering is designed to help you seek Allah's forgiveness, heal relationships, and maximise the final 10 nights of Ramadan.
+            </p>
+            <p className="topic-description">
+              Through uplifting and practical talks, our speakers will explore:
             </p>
             <ul className="topic-features">
               <li className="topic-feature">
                 <span className="topic-feature-icon">🕌</span>
                 <span>
-                  Learn the profound teachings of forgiveness in Islamic
-                  tradition and their transformative power in our lives.
+                  How to attain forgiveness from Allah
                 </span>
               </li>
               <li className="topic-feature">
                 <span className="topic-feature-icon">✨</span>
                 <span>
-                  Learn how to secure the immense reward of Laylatul Qadr and
-                  become among those whom Allah loves.
+                  The spiritual importance of forgiving others
                 </span>
               </li>
               <li className="topic-feature">
                 <span className="topic-feature-icon">🌙</span>
                 <span>
-                  Reflect deeply on your actions, seek sincere repentance, and
-                  understand the path to spiritual purification.
-                </span>
-              </li>
-              <li className="topic-feature">
-                <span className="topic-feature-icon">🤲</span>
-                <span>
-                  Be Forgiven through Allah's infinite mercy and grace, and
-                  experience the peace that comes with true forgiveness.
+                  How to maximise the last 10 nights of Ramadan, including Laylatul Qadr
                 </span>
               </li>
             </ul>
-            <button className="book-now-button">Book Now</button>
+            <p className="topic-description">
+              The event starts at 4pm and will conclude with Esha Salah & Taraweeh on the night with guest Imams.
+            </p>
+            <a href="https://www.tickettailor.com/events/familyevents2/2052743" target="_blank" rel="noopener noreferrer" className="book-now-button">Book Now</a>
           </div>
         </div>
       </section>
@@ -1068,20 +950,12 @@ function App() {
                 <img src={readFoundationLogo} alt="Muslims in Need" className="footer-logo" />
                 <h3 className="footer-label">CHARITY PARTNER</h3>
               </div>
-              <p className="footer-heading">Hope Through Action.</p>
+              <p className="footer-heading">This event is proudly sponsored by Muslims in Need.</p>
               <p className="footer-text">
-                Muslims in Need operates across 25+ countries, responding to humanitarian crises with urgency and compassion.
-                From the devastation in Gaza and Palestine to the famine sweeping Yemen and the displacement crises in Syria,
-                families face unimaginable suffering with nowhere to turn. At Muslims in Need, we are committed to delivering
-                emergency relief and sustainable support to those facing poverty, conflict, and disaster—serving the most
-                vulnerable regardless of race, religion, or background.
+                On the night, we will be raising Sadaqah and Zakat in support of vital humanitarian projects. 100% of all donations go directly to those in need, in line with Muslims in Need's 100% donation policy.
               </p>
               <p className="footer-text">
-                Our work transcends temporary aid—we provide comprehensive humanitarian support including emergency food
-                parcels, clean water, shelter, and medical care to those affected by conflict and natural disaster. Equally
-                important, we invest in long-term solutions that help communities rebuild and regain their dignity. Together,
-                we can offer vulnerable families not just survival, but the genuine opportunity to restore their lives and
-                secure a brighter future for generations to come.
+                Join us for a powerful Ramadan evening of faith, forgiveness, and generosity—an opportunity to nourish both the soul and the wider Ummah.
               </p>
             </div>
             <div className="footer-image-wrapper">
