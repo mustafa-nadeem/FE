@@ -501,7 +501,7 @@ function App() {
                 <a href="https://charitydinner.co.uk/terms/" className="mobile-footer-link" target="_blank" rel="noopener noreferrer">Terms & Conditions</a>
               </div>
               <p className="mobile-footer-contact">
-                <a href="mailto:info@charitydinner.co.uk">info@charitydinner.co.uk</a>
+                <a href="mailto:enquires@familyevents.org.uk">enquires@familyevents.org.uk</a>
               </p>
             </div>
           </div>
@@ -554,17 +554,19 @@ function App() {
               A luxury evening of inspirational knowledge and action,
               <br /> paired with a delicious iftar in West London.
             </p>
-            <div className="hero-discount-banner">
-              <p className="hero-discount-text">
-                <span className="hero-discount-label">50% Discount</span>
-                <span className="hero-discount-price">
-                  <span className="hero-price-old">£20</span>
-                  <span className="hero-price-new">£10</span>
-                </span>
-              </p>
-              <p className="hero-discount-date">Valid until 10th Feb</p>
+            <div className="hero-cta-wrapper">
+              <div className="hero-discount-banner">
+                <p className="hero-discount-text">
+                  <span className="hero-discount-label">50% Discount</span>
+                  <span className="hero-discount-price">
+                    <span className="hero-price-old">£20</span>
+                    <span className="hero-price-new">£10</span>
+                  </span>
+                </p>
+                <p className="hero-discount-date">Valid until 10th Feb</p>
+              </div>
+              <a href="https://www.tickettailor.com/events/familyevents2/2052743" target="_blank" rel="noopener noreferrer" className="book-now-button">Book Now</a>
             </div>
-            <a href="https://www.tickettailor.com/events/familyevents2/2052743" target="_blank" rel="noopener noreferrer" className="book-now-button">Book Now</a>
           </div>
         </div>
 
@@ -806,7 +808,7 @@ function App() {
                 className={`faq-answer ${openFaqIndex === 0 ? "is-open" : ""}`}
               >
                 <p>
-                  The doors open at 3:45 PM and close at 4:30 PM. The event runs from 4:00 PM to 7:00 PM. Please ensure you arrive before 4:30 PM, as late arrivals may not be accommodated.
+                  The doors open at 3:45 PM and close at 4:30 PM. The event runs from 4:00 PM to 8:00 PM. Please ensure you arrive before 4:30 PM, as late arrivals may not be accommodated.
                 </p>
               </div>
             </div>
@@ -844,7 +846,7 @@ function App() {
                 className={`faq-answer ${openFaqIndex === 2 ? "is-open" : ""}`}
               >
                 <p>
-                  Tickets are priced at £15 per person. However, a FLASH SALE is available for just £10 for limited time.
+                  Tickets are priced at £20 per person. However, a FLASH SALE is available for just £10 for limited time.
                 </p>
               </div>
             </div>
@@ -903,7 +905,9 @@ function App() {
               onClick={() => setOpenFaqIndex(openFaqIndex === 5 ? null : 5)}
             >
               <div className="faq-question">
-                <span>Is the food HMC certified?</span>
+                <span>
+                  How do I get in touch if I have more questions?
+                </span>
                 <span className="faq-icon">
                   {openFaqIndex === 5 ? "−" : "+"}
                 </span>
@@ -912,28 +916,7 @@ function App() {
                 className={`faq-answer ${openFaqIndex === 5 ? "is-open" : ""}`}
               >
                 <p>
-                  Yes, the food is HMC certified.
-                </p>
-              </div>
-            </div>
-
-            <div
-              className="faq-item"
-              onClick={() => setOpenFaqIndex(openFaqIndex === 6 ? null : 6)}
-            >
-              <div className="faq-question">
-                <span>
-                  How do I get in touch if I have more questions?
-                </span>
-                <span className="faq-icon">
-                  {openFaqIndex === 6 ? "−" : "+"}
-                </span>
-              </div>
-              <div
-                className={`faq-answer ${openFaqIndex === 6 ? "is-open" : ""}`}
-              >
-                <p>
-                  If you have any additional questions, feel free to contact us at <a href="mailto:info@charitydinner.co.uk" style={{color: '#fff', textDecoration: 'underline'}}>info@charitydinner.co.uk</a>. We'll be happy to assist you with any inquiries about the event.
+                  If you have any additional questions, feel free to contact us at <a href="mailto:enquires@familyevents.org.uk" style={{color: '#fff', textDecoration: 'underline'}}>enquires@familyevents.org.uk</a>. We'll be happy to assist you with any inquiries about the event.
                 </p>
               </div>
             </div>
@@ -966,7 +949,7 @@ function App() {
             <div className="footer-links">
               <a href="https://charitydinner.co.uk/terms/" className="footer-link" target="_blank" rel="noopener noreferrer">Terms & Conditions</a>
             </div>
-            <p className="footer-contact">Contact: <a href="mailto:info@charitydinner.co.uk">info@charitydinner.co.uk</a></p>
+            <p className="footer-contact">Contact: <a href="mailto:enquires@familyevents.org.uk">enquires@familyevents.org.uk</a></p>
           </div>
         </div>
       </footer>
